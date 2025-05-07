@@ -1,0 +1,19 @@
+{
+    "name": "eyuhar/manxa-scraper-backend",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Eyyuep",
+            "email": "eyuep.harputlu@gmail.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.9",
+        "symfony/dom-crawler": "^7.2",
+        "symfony/css-selector": "^7.2"
+    }
+}
