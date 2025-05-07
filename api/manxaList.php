@@ -7,6 +7,7 @@ require_once './../vendor/autoload.php';
 
 use App\Scraper;
 
+// get page from query parameter
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
 $data = Scraper::getManxaList($page);
