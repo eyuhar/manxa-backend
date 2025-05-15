@@ -162,4 +162,33 @@ class Scraper {
         
         return $imageData;
     }
+
+    public static function getChapter($url): array {
+        $client = new Client([
+            'timeout'  => 10.0,
+        ]);
+        
+        try {
+            $response = $client->request('GET', $url);
+            if ($response->getStatusCode() !== 200) {
+                return ["error" => "Failed to fetch data from the server."];
+            }
+            $html = $response->getBody()->getContents();
+
+            $crawler = new Crawler($html);
+
+            // Filter the HTML to get the image URLs of required manxa chapter
+            $chapterImageElements = $crawler->filter('.container-chapter-reader > img');
+            
+            $imageUrls = [];
+            $chapterImageElements->each(function (Crawler $node) use (&$imageUrls) {
+                array_push($imageUrls, $node->attr('src'));
+            });
+
+            return $imageUrls;
+
+        } catch (\Exception $e) {
+            return ["error" => $e->getMessage()];
+        }
+    }
 }
