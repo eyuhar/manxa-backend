@@ -139,4 +139,27 @@ class Scraper {
             return ["error" => $e->getMessage()];
         }
     }
+
+    public static function getImage($url): string {
+        $opts = [
+            'http' => [
+                'method' => 'GET',
+                'header' => 
+                    "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)\r\n" .
+                    "Accept: image/avif,image/webp,image/apng,image/*,*/*;q=0.8\r\n" .
+                    "Referer: https://www.mangakakalot.gg/\r\n"
+            ]
+        ];
+        
+        $context = stream_context_create($opts);
+        $imageData = @file_get_contents($url, false, $context);
+        
+        if ($imageData === false) {
+            http_response_code(500);
+            echo "Failed to load image.";
+            exit;
+        }
+        
+        return $imageData;
+    }
 }
