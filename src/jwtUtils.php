@@ -26,9 +26,7 @@ function validateJWT($token) {
     global $JWT_SECRET;
     try {
         $decoded = JWT::decode($token, new Key($JWT_SECRET, 'HS256'));
-        return [
-            'uid' => $decoded->uid
-            ] ?? null;
+        return $decoded->uid ?? null;
     } catch (Exception $e) {
         return null;
     }
