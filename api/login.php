@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../src/jwtUtils.php';
 // Load the database connection function
 require_once __DIR__ . '/../src/db.php';
 
@@ -31,7 +32,13 @@ try {
 
     // Verify password
     if ($user && password_verify($password, $user['password'])) {
-        echo json_encode(['message' => 'Login successful']);
+        // Generate JWT token
+        $token = generateJWT($user['id']);
+
+        echo json_encode([
+            'message' => 'Login successful',
+            'token' => $token
+        ]);
     } else {
         http_response_code(401);
         echo json_encode(['error' => 'Invalid email or password.']);
