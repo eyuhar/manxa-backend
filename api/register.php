@@ -39,6 +39,13 @@ try {
     $stmt = $pdo->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
     $stmt->execute([$email, $hashedPassword]);
 
+    $userId = $pdo->lastInsertId();
+
+    // create a default list for the new user
+    $defaultListName = 'Favorites';
+    $stmt = $pdo->prepare("INSERT INTO lists (user_id, name) VALUES (?, ?)");
+    $stmt->execute([$userId, $defaultListName]);
+
     // Respond with success
     echo json_encode(['message' => 'User registered successfully.']);
 
