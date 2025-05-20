@@ -2,13 +2,13 @@
 
 This project is a backend API for a man(x)a (g, hw, hu) reading application. It includes user authentication, favorites management, custom list support, reading progress tracking, and scraping functionality for manxa content.
 
----
+
 
 ## 📄 Documentation
 
 For the full API documentation and implementation details, see [docs/api.md](docs/api.md).
 
----
+
 
 ## 📁 Project Structure
 
@@ -40,7 +40,7 @@ src/
 └── Scraper.php                # Manxa scraping logic
 ```
 
----
+
 
 ## 🔐 JWT Auth
 
@@ -52,7 +52,7 @@ Authorization: Bearer YOUR_TOKEN
 
 You can use helper methods in `src/jwtUtils.php` to generate and verify tokens.
 
----
+
 
 ## 🛠 Database Notes
 
@@ -61,7 +61,7 @@ You can use helper methods in `src/jwtUtils.php` to generate and verify tokens.
 * `manxa_url` and `chapter_url` are used as unique references for manxa and chapters.
 * Default list `"Favorites"` is created during registration.
 
----
+
 
 ## 📦 Setup
 
