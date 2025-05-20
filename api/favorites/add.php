@@ -13,7 +13,7 @@ $manxaUrl = trim($data['manxa_url'] ?? '');
 
 if (empty($title) || empty($manxaUrl)) {
     http_response_code(400);
-    echo json_encode(['error' => 'Title and manxa_url are required']);
+    echo json_encode(['success' => false, 'error' => 'Title and manxa_url are required']);
     exit;
 }
 
@@ -24,7 +24,7 @@ $listName = trim($data['list_name'] ?? 'Favorites');
 $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? null;
 if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
     http_response_code(401);
-    echo json_encode(['error' => 'Authorization header missing or invalid']);
+    echo json_encode(['success' => false, 'error' => 'Authorization header missing or invalid']);
     exit;
 }
 
@@ -33,7 +33,7 @@ $uid = validateJWT($jwt);
 
 if (!$uid) {
     http_response_code(401);
-    echo json_encode(['error' => 'Invalid or expired token']);
+    echo json_encode(['success' => false, 'error' => 'Invalid or expired token']);
     exit;
 }
 
@@ -47,7 +47,7 @@ try {
 
     if (!$list) {
         http_response_code(404);
-        echo json_encode(['error' => 'List not found']);
+        echo json_encode(['success' => false, 'error' => 'List not found']);
         exit;
     }
 
@@ -59,7 +59,7 @@ try {
 
     if ($stmt->fetch()) {
         http_response_code(409);
-        echo json_encode(['error' => 'Manga already exists in this list']);
+        echo json_encode(['success' => false, 'error' => 'Manga already exists in this list']);
         exit;
     }
 
@@ -70,5 +70,5 @@ try {
     echo json_encode(['success' => true, 'message' => 'Manga added to favorites']);
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
 }

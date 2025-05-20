@@ -11,7 +11,7 @@ $data = json_decode(file_get_contents("php://input"), true);
 // Check if email & password were provided
 if (!isset($data['email']) || !isset($data['password'])) {
     http_response_code(400);
-    echo json_encode(["error" => "Email and password are required."]);
+    echo json_encode(["success" => false, "error" => "Email and password are required."]);
     exit;
 }
 
@@ -28,7 +28,7 @@ try {
     $stmt->execute([$email]);
     if ($stmt->fetch()) {
         http_response_code(409);
-        echo json_encode(['error' => 'Email is already registered.']);
+        echo json_encode(['success' => false, 'error' => 'Email is already registered.']);
         exit;
     }
 
@@ -47,9 +47,9 @@ try {
     $stmt->execute([$userId, $defaultListName]);
 
     // Respond with success
-    echo json_encode(['message' => 'User registered successfully.']);
+    echo json_encode(['success' => true, 'message' => 'User registered successfully.']);
 
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
 }

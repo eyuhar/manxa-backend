@@ -12,7 +12,7 @@ $chapterUrl = trim($data['chapter_url'] ?? '');
 // Validate input
 if (empty($manxaUrl) || empty($chapterUrl)) {
     http_response_code(400);
-    echo json_encode(['error' => 'manxa_url and chapter_url are required']);
+    echo json_encode(['success' => false, 'error' => 'manxa_url and chapter_url are required']);
     exit;
 }
 
@@ -20,7 +20,7 @@ if (empty($manxaUrl) || empty($chapterUrl)) {
 $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? null;
 if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
     http_response_code(401);
-    echo json_encode(['error' => 'Authorization header missing or invalid']);
+    echo json_encode(['success' => false, 'error' => 'Authorization header missing or invalid']);
     exit;
 }
 
@@ -29,7 +29,7 @@ $uid = validateJWT($jwt);
 
 if (!$uid) {
     http_response_code(401);
-    echo json_encode(['error' => 'Invalid or expired token']);
+    echo json_encode(['success' => false, 'error' => 'Invalid or expired token']);
     exit;
 }
 
@@ -52,5 +52,5 @@ try {
     echo json_encode(['success' => true, 'message' => 'Chapter marked as read']);
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
 }

@@ -17,7 +17,10 @@ $password = $data['password'] ?? null;
 // Check if required fields are present
 if (!$email || !$password) {
     http_response_code(400);
-    echo json_encode(['error' => 'Email and password are required.']);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Email and password are required.'
+    ]);
     exit;
 }
 
@@ -36,15 +39,22 @@ try {
         $token = generateJWT($user['id']);
 
         echo json_encode([
+            'success' => true,
             'message' => 'Login successful',
             'token' => $token
         ]);
     } else {
         http_response_code(401);
-        echo json_encode(['error' => 'Invalid email or password.']);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Invalid email or password.'
+        ]);
     }
 
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Database error: ' . $e->getMessage()
+    ]);
 }

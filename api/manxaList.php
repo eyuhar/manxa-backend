@@ -10,5 +10,15 @@ use App\Scraper;
 // get page from query parameter
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
-$data = Scraper::getManxaList($page);
-echo json_encode($data);
+try {
+    $data = Scraper::getManxaList($page);
+    echo json_encode([
+        'success' => true,
+        'data' => $data
+    ]);
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
+}

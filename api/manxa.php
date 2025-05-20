@@ -10,9 +10,9 @@ use App\Scraper;
 // get title from query parameter
 $title = isset($_GET['title']) ? $_GET['title'] : null;
 if ($title === null) {
-    echo json_encode(["error" => "Title parameter is required."]);
+    echo json_encode(["success" => false, "error" => "Title parameter is required."]);
     exit;
 }
 
 $data = Scraper::getManxa($title);
-echo json_encode($data);
+echo json_encode(["success" => true, "data" => $data]);

@@ -11,7 +11,7 @@ $listName = trim($data['name'] ?? '');
 // Check if list name is provided
 if (empty($listName)) {
     http_response_code(400);
-    echo json_encode(['error' => 'List name is required']);
+    echo json_encode(['success' => false, 'error' => 'List name is required']);
     exit;
 }
 
@@ -19,7 +19,7 @@ if (empty($listName)) {
 $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? null;
 if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
     http_response_code(401);
-    echo json_encode(['error' => 'Authorization header missing or invalid']);
+    echo json_encode(['success' => false, 'error' => 'Authorization header missing or invalid']);
     exit;
 }
 
@@ -30,7 +30,7 @@ $uid = validateJWT($jwt);
 
 if (!$uid) {
     http_response_code(401);
-    echo json_encode(['error' => 'Invalid or expired token']);
+    echo json_encode(['success' => false, 'error' => 'Invalid or expired token']);
     exit;
 }
 
@@ -45,9 +45,9 @@ try {
         echo json_encode(['success' => true, 'message' => 'List deleted']);
     } else {
         http_response_code(404);
-        echo json_encode(['error' => 'List not found']);
+        echo json_encode(['success' => false, 'error' => 'List not found']);
     }
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
 }

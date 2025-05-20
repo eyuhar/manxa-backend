@@ -12,7 +12,7 @@ $newName = trim($data['new_name'] ?? '');
 // Validate input
 if (empty($oldName) || empty($newName)) {
     http_response_code(400);
-    echo json_encode(['error' => 'Both old and new list names are required']);
+    echo json_encode(['success' => false, 'error' => 'Both old and new list names are required']);
     exit;
 }
 
@@ -20,7 +20,7 @@ if (empty($oldName) || empty($newName)) {
 $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? null;
 if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
     http_response_code(401);
-    echo json_encode(['error' => 'Authorization header missing or invalid']);
+    echo json_encode(['success' => false, 'error' => 'Authorization header missing or invalid']);
     exit;
 }
 $jwt = substr($authHeader, 7);
@@ -28,7 +28,7 @@ $uid = validateJWT($jwt);
 
 if (!$uid) {
     http_response_code(401);
-    echo json_encode(['error' => 'Invalid or expired token']);
+    echo json_encode(['success' => false, 'error' => 'Invalid or expired token']);
     exit;
 }
 
@@ -42,7 +42,7 @@ try {
 
     if (!$list) {
         http_response_code(404);
-        echo json_encode(['error' => 'List not found']);
+        echo json_encode(['success' => false, 'error' => 'List not found']);
         exit;
     }
 
@@ -51,7 +51,7 @@ try {
     $stmt->execute([$uid, $newName]);
     if ($stmt->fetch()) {
         http_response_code(409);
-        echo json_encode(['error' => 'A list with the new name already exists']);
+        echo json_encode(['success' => false, 'error' => 'A list with the new name already exists']);
         exit;
     }
 
@@ -62,5 +62,5 @@ try {
     echo json_encode(['success' => true, 'message' => 'List renamed']);
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
 }
