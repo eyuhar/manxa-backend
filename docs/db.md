@@ -39,8 +39,9 @@ id INT PRIMARY KEY AUTO_INCREMENT,
 user_id INT NOT NULL,
 manxa_url VARCHAR(255) NOT NULL,
 chapter_url VARCHAR(255) NOT NULL,
-FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-UNIQUE KEY unique_progress (user_id, chapter_url)
+read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+UNIQUE KEY (user_id, manxa_url, chapter_url),
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ```
 
 ---

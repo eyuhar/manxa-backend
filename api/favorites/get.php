@@ -22,7 +22,7 @@ if (!$uid) {
 }
 
 // Get optional list name from query string
-$listName = $_GET['list'] ?? 'Favorites';
+$listName = $_GET['list'] ?? 'Standard';
 
 try {
     $pdo = getDatabaseConnection();

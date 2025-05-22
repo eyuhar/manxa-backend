@@ -42,6 +42,45 @@ src/
 
 
 
+## Example
+
+### `GET /api/favorites/get.php?list=list_name`
+
+Returns all favorites from list list_name.
+
+**Headers:**
+
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+**Response:**
+
+```json
+[
+  {
+    "list": "Standard",
+    "items": {
+        "success": true,
+        "favorites": [
+            {
+                "title": "Naruto",
+                "manxa_url": "/manxa/naruto",
+                "created_at": "creation_timestamp"
+            },
+            {
+                "title": "One Piece",
+                "manxa_url": "/manxa/one-piece",
+                "created_at": "creation_timestamp"
+            }
+        ]
+    }
+  }
+]
+```
+
+
+
 ## 🔐 JWT Auth
 
 Most endpoints require a valid JWT in the `Authorization` header:
@@ -81,6 +120,14 @@ JWT_SECRET=your_super_secret_key
 ```
 php -S localhost:8000
 ```
+
+
+
+
+## ⚠️ Disclaimer
+
+This project includes scraping features to extract publicly available manxa data. It is intended solely for personal or educational use. Please ensure you comply with the terms of service of any websites you interact with. The author does not condone or support misuse of this code.
+
 
 ---
 

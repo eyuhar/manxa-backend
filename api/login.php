@@ -40,7 +40,7 @@ try {
 
         echo json_encode([
             'success' => true,
-            'message' => 'Login successful',
+            'message' => 'Login successful.',
             'token' => $token
         ]);
     } else {

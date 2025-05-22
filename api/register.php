@@ -42,7 +42,7 @@ try {
     $userId = $pdo->lastInsertId();
 
     // create a default list for the new user
-    $defaultListName = 'Favorites';
+    $defaultListName = 'Standard';
     $stmt = $pdo->prepare("INSERT INTO lists (user_id, name) VALUES (?, ?)");
     $stmt->execute([$userId, $defaultListName]);
 

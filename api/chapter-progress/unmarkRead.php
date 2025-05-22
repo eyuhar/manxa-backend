@@ -40,7 +40,7 @@ try {
     $stmt = $pdo->prepare("DELETE FROM chapter_progress WHERE user_id = ? AND manxa_url = ? AND chapter_url = ?");
     $stmt->execute([$uid, $manxaUrl, $chapterUrl]);
 
-    echo json_encode(['success' => true, 'message' => 'Chapter unmarked as read']);
+    echo json_encode(['success' => true, 'message' => 'Chapter unmarked as read.']);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);

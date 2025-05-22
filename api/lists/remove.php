@@ -42,7 +42,7 @@ try {
     $stmt->execute([$uid, $listName]);
 
     if ($stmt->rowCount() > 0) {
-        echo json_encode(['success' => true, 'message' => 'List deleted']);
+        echo json_encode(['success' => true, 'message' => 'List deleted.']);
     } else {
         http_response_code(404);
         echo json_encode(['success' => false, 'error' => 'List not found']);

@@ -17,8 +17,8 @@ if (empty($title) || empty($manxaUrl)) {
     exit;
 }
 
-// Extract optional list name, default to "Favorites"
-$listName = trim($data['list_name'] ?? 'Favorites');
+// Extract optional list name, default to "Standard"
+$listName = trim($data['list_name'] ?? 'Standard');
 
 // Get Authorization header
 $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? null;
@@ -59,7 +59,7 @@ try {
 
     if ($stmt->fetch()) {
         http_response_code(409);
-        echo json_encode(['success' => false, 'error' => 'Manga already exists in this list']);
+        echo json_encode(['success' => false, 'error' => 'Manxa already exists in this list']);
         exit;
     }
 
@@ -67,7 +67,7 @@ try {
     $stmt = $pdo->prepare("INSERT INTO favorites (user_id, list_id, title, manxa_url) VALUES (?, ?, ?, ?)");
     $stmt->execute([$uid, $listId, $title, $manxaUrl]);
 
-    echo json_encode(['success' => true, 'message' => 'Manga added to favorites']);
+    echo json_encode(['success' => true, 'message' => 'Manxa added to '.$listName.'.']);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);

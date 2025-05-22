@@ -59,7 +59,7 @@ try {
     $stmt = $pdo->prepare("UPDATE lists SET name = ? WHERE user_id = ? AND name = ?");
     $stmt->execute([$newName, $uid, $oldName]);
 
-    echo json_encode(['success' => true, 'message' => 'List renamed']);
+    echo json_encode(['success' => true, 'message' => 'List renamed.']);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);

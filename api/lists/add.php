@@ -53,7 +53,7 @@ try {
     $stmt = $pdo->prepare("INSERT INTO lists (user_id, name) VALUES (?, ?)");
     $stmt->execute([$uid, $listName]);
 
-    echo json_encode(['success' => true, 'message' => 'List created']);
+    echo json_encode(['success' => true, 'message' => 'List created.']);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);

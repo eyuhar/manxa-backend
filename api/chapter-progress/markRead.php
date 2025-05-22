@@ -49,7 +49,7 @@ try {
     $stmt = $pdo->prepare("INSERT INTO chapter_progress (user_id, manxa_url, chapter_url) VALUES (?, ?, ?)");
     $stmt->execute([$uid, $manxaUrl, $chapterUrl]);
 
-    echo json_encode(['success' => true, 'message' => 'Chapter marked as read']);
+    echo json_encode(['success' => true, 'message' => 'Chapter marked as read.']);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
