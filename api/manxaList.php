@@ -5,6 +5,8 @@ header("Content-Type: application/json");
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+header('Content-Type: application/json');
+
 use App\Scraper;
 
 // get page from query parameter

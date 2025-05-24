@@ -50,14 +50,13 @@ class Scraper {
         }
     }
 
-    public static function getManxa($title): array {
+    public static function getManxa($manxaUrl): array {
         $client = new Client([
-            'base_uri' => 'https://www.mangakakalot.gg',
             'timeout'  => 10.0,
         ]);
         
         try {
-            $response = $client->request('GET', '/manga'.'/'.$title);
+            $response = $client->request('GET', $manxaUrl);
             if ($response->getStatusCode() !== 200) {
                 return ["error" => "Failed to fetch data from the server."];
             }
