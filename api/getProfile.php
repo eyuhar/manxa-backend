@@ -24,7 +24,7 @@ if (!$uid) {
 
 // Get user data from database
 $pdo = getDatabaseConnection();
-$stmt = $pdo->prepare("SELECT id, email, created_at FROM users WHERE id = ?");
+$stmt = $pdo->prepare("SELECT id, email, created_at, user_name FROM users WHERE id = ?");
 $stmt->execute([$uid]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

@@ -18,6 +18,7 @@ if (!isset($data['email']) || !isset($data['password'])) {
 // Extract email and password from the request
 $email = $data['email'] ?? null;
 $password = $data['password'] ?? null;
+$userName = $data['user_name'] ?? null;
 
 try {
     // Get a database connection
@@ -36,8 +37,8 @@ try {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert the new user into the database
-    $stmt = $pdo->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-    $stmt->execute([$email, $hashedPassword]);
+    $stmt = $pdo->prepare("INSERT INTO users (email, password, user_name) VALUES (?, ?)");
+    $stmt->execute([$email, $hashedPassword, $userName]);
 
     $userId = $pdo->lastInsertId();
 
