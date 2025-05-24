@@ -311,3 +311,7 @@ Returns a chapter imgs.
 
 Image proxy (used if CORS issues with images arise).
 
+## `GET /api/search.php?query=isekai`
+
+Searches for manxa matching the given query string.
+

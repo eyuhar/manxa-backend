@@ -10,6 +10,10 @@ class Scraper {
         $client = new Client([
             'base_uri' => 'https://www.mangakakalot.gg',
             'timeout'  => 10.0,
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+                'Referer' => 'https://www.mangakakalot.gg/'
+            ]
         ]);
         
         try {
@@ -53,6 +57,10 @@ class Scraper {
     public static function getManxa($manxaUrl): array {
         $client = new Client([
             'timeout'  => 10.0,
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+                'Referer' => 'https://www.mangakakalot.gg/'
+            ]
         ]);
         
         try {
@@ -165,6 +173,10 @@ class Scraper {
     public static function getChapter($url): array {
         $client = new Client([
             'timeout'  => 10.0,
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+                'Referer' => 'https://www.mangakakalot.gg/'
+            ]
         ]);
         
         try {
@@ -185,6 +197,61 @@ class Scraper {
             });
 
             return $imageUrls;
+
+        } catch (\Exception $e) {
+            return ["error" => $e->getMessage()];
+        }
+    }
+
+    public static function getSearchResults($query, $page = 1): array {
+        $client = new Client([
+            'base_uri' => 'https://www.mangakakalot.gg',
+            'timeout'  => 10.0,
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+                'Referer' => 'https://www.mangakakalot.gg/'
+            ]
+        ]);
+        
+        try {
+            $response = $client->request('GET', '/search/story/' . urlencode($query) . '?page=' . $page);
+            if ($response->getStatusCode() !== 200) {
+                return ["error" => "Failed to fetch data from the server."];
+            }
+            $html = $response->getBody()->getContents();
+
+            $crawler = new Crawler($html);
+
+            $results = [];
+
+            // Filter the HTML to get the search results
+            $leftCol = $crawler->filter('.container > .main-wrapper > .leftCol');
+            $leftCol->filter('.daily-update > .panel_story_list > .story_item')->each(function (Crawler $node) use (&$results) {
+                $title = $node->filter('.story_item_right > .story_name > a')->text();
+                $url = $node->filter('a')->attr('href');
+                $img = $node->filter('a > img')->attr('src');
+                $newestChapter = $node->filter('.story_item_right > .story_chapter')->eq(0)->filter('a')->text();
+
+                $results[] = [
+                    'title' => $title,
+                    'url'   => $url,
+                    'img'   => $img,
+                    'newestChapter' => $newestChapter
+                ];
+            });
+
+            $totalResultsString = $leftCol->filter('.panel_page_number > .group_qty > div')->text();
+            $totalResults = explode(" ", $totalResultsString)[1];
+
+            $totalPagesString = $leftCol->filter('.panel_page_number > .group_page > .page_last')->text();
+            preg_match('/\((\d+)\)/', $totalPagesString, $matches);
+            $totalPages = $matches[1];
+
+            return [
+                "totalResults" => $totalResults,
+                "totalPages" => $totalPages,
+                "results" => $results
+            ];
 
         } catch (\Exception $e) {
             return ["error" => $e->getMessage()];
