@@ -57,26 +57,22 @@ Authorization: Bearer <JWT_TOKEN>
 **Response:**
 
 ```json
-[
-  {
+{
+    "success": true,
     "list": "Standard",
-    "items": {
-        "success": true,
-        "favorites": [
-            {
-                "title": "Naruto",
-                "manxa_url": "/manxa/naruto",
-                "created_at": "creation_timestamp"
-            },
-            {
-                "title": "One Piece",
-                "manxa_url": "/manxa/one-piece",
-                "created_at": "creation_timestamp"
-            }
-        ]
-    }
-  }
-]
+    "favorites": [
+        {
+            "title": "Naruto",
+            "manxa_url": "/manxa/naruto",
+            "created_at": "creation_timestamp"
+        },
+        {
+            "title": "One Piece",
+            "manxa_url": "/manxa/one-piece",
+            "created_at": "creation_timestamp"
+        }
+    ]
+}
 ```
 
 

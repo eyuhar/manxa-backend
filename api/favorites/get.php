@@ -45,7 +45,7 @@ try {
     $stmt->execute([$uid, $listId]);
     $favorites = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode(['success' => true, 'favorites' => $favorites]);
+    echo json_encode(['success' => true, 'list' => ''.$listName, 'favorites' => $favorites]);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
