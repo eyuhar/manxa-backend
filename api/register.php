@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/init.php';
 // Load the database connection function
 require_once __DIR__ . '/../src/db.php';
 

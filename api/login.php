@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/init.php';
 require_once __DIR__ . '/../src/jwtUtils.php';
 // Load the database connection function
 require_once __DIR__ . '/../src/db.php';
