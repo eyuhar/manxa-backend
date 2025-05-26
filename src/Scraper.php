@@ -27,8 +27,10 @@ class Scraper {
 
             $manxas = [];
 
+            $wrapper = $crawler->filter('.container > .main-wrapper > .listCol > .truyen-list');
+
             // Filter the HTML to get the list of manxa
-            $crawler->filter('.container > .main-wrapper > .listCol > .truyen-list > .list-truyen-item-wrap')->each(function (Crawler $node) use (&$manxas) {
+            $wrapper->filter('.list-truyen-item-wrap')->each(function (Crawler $node) use (&$manxas) {
                 $title = $node->filter('h3 > a')->attr("title");
                 $url = $node->filter('h3 > a')->attr('href');
                 $img = $node->filter('a > img')->attr('src');
@@ -44,8 +46,16 @@ class Scraper {
                 ];
             });
 
+            $totalResultsString = $wrapper->filter('.panel_page_number > .group_qty > .page_blue')->text();
+            $totalResults = explode(" ", $totalResultsString)[1];
+
+            $totalPagesString = $wrapper->filter('.panel_page_number > .group_page > .page_last')->text();
+            preg_match('/\((\d+)\)/', $totalPagesString, $matches);
+            $totalPages = $matches[1];
+
             return [
-                "count" => count($manxas),
+                "totalResults" => $totalResults,
+                "totalPages" => $totalPages,
                 "results" => $manxas
             ];
 
@@ -240,7 +250,7 @@ class Scraper {
                 ];
             });
 
-            $totalResultsString = $leftCol->filter('.panel_page_number > .group_qty > div')->text();
+            $totalResultsString = $leftCol->filter('.panel_page_number > .group_qty > .page_blue')->text();
             $totalResults = explode(" ", $totalResultsString)[1];
 
             $totalPagesString = $leftCol->filter('.panel_page_number > .group_page > .page_last')->text();
