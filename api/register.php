@@ -11,9 +11,9 @@ header("Content-Type: application/json");
 $data = json_decode(file_get_contents("php://input"), true);
 
 // Check if email & password were provided
-if (!isset($data['email']) || !isset($data['password'])) {
+if (!isset($data['email']) || !isset($data['password']) || !isset($data['user_name'])) {
     http_response_code(400);
-    echo json_encode(["success" => false, "error" => "Email and password are required."]);
+    echo json_encode(["success" => false, "error" => "Email, password and user name are required."]);
     exit;
 }
 
