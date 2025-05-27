@@ -39,7 +39,7 @@ try {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert the new user into the database
-    $stmt = $pdo->prepare("INSERT INTO users (email, password, user_name) VALUES (?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO users (email, password, user_name) VALUES (?, ?, ?)");
     $stmt->execute([$email, $hashedPassword, $userName]);
 
     $userId = $pdo->lastInsertId();
