@@ -9,6 +9,7 @@ Registers a new user and creates a default list ("Standard").
 
 ```json
 {
+    "user_name": "User",
     "email": "user@example.com",
     "password": "yourPassword"
 }
