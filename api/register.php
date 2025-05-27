@@ -17,7 +17,7 @@ if (!isset($data['email']) || !isset($data['password'])) {
     exit;
 }
 
-// Extract email and password from the request
+// Extract email, password and user_name from the request
 $email = $data['email'] ?? null;
 $password = $data['password'] ?? null;
 $userName = $data['user_name'] ?? null;
