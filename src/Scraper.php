@@ -47,11 +47,11 @@ class Scraper {
             });
 
             $totalResultsString = $wrapper->filter('.panel_page_number > .group_qty > .page_blue')->text();
-            $totalResults = explode(" ", $totalResultsString)[1];
+            $totalResults = (int) explode(" ", $totalResultsString)[1];
 
             $totalPagesString = $wrapper->filter('.panel_page_number > .group_page > .page_last')->text();
             preg_match('/\((\d+)\)/', $totalPagesString, $matches);
-            $totalPages = $matches[1];
+            $totalPages = (int) $matches[1];
 
             return [
                 "totalResults" => $totalResults,
@@ -133,7 +133,7 @@ class Scraper {
                 $chapters[] = [
                     'chapter' => $chapter,
                     'chapterUrl' => $chapterUrl,
-                    'chapterViews' => $chapterViews,
+                    'chapterViews' => (int) $chapterViews,
                     'chapterUploadTime' => $chapterUploadTime,
                 ];
             });
@@ -144,7 +144,7 @@ class Scraper {
                 'authors' => $authors,
                 'status' => $status,
                 'lastUpdate' => $lastUpdate,
-                'views' => $views,
+                'views' => (int) $views,
                 'genres' => $genres,
                 'rating' => $rating,
                 'chapters' => $chapters,
@@ -258,8 +258,8 @@ class Scraper {
             $totalPages = $matches[1];
 
             return [
-                "totalResults" => $totalResults,
-                "totalPages" => $totalPages,
+                "totalResults" => (int) $totalResults,
+                "totalPages" => (int) $totalPages,
                 "results" => $results
             ];
 
