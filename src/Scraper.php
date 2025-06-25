@@ -123,6 +123,8 @@ class Scraper {
             
             $img = $manxaElement->filter('.manga-info-top > .manga-info-pic > img')->attr('src');
 
+            $summary = $manxaElement->filter('#contentBox')->text();
+
             $chapters = [];
             $manxaElement->filter(".chapter-list > .row")->each(function (Crawler $node) use (&$chapters) {
                 $chapter = $node->filter('a')->text();
@@ -147,6 +149,7 @@ class Scraper {
                 'views' => (int) $views,
                 'genres' => $genres,
                 'rating' => $rating,
+                'summary' => $summary,
                 'chapters' => $chapters,
             ];
 
