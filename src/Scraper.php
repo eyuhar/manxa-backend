@@ -5,8 +5,10 @@ namespace App;
 use GuzzleHttp\Client;
 use Symfony\Component\DomCrawler\Crawler;
 
-class Scraper {
-    public static function getManxaList($page = 1): array {
+class Scraper
+{
+    public static function getManxaList($page = 1): array
+    {
         $client = new Client([
             'base_uri' => 'https://www.mangakakalot.gg',
             'timeout'  => 10.0,
@@ -15,9 +17,9 @@ class Scraper {
                 'Referer' => 'https://www.mangakakalot.gg/'
             ]
         ]);
-        
+
         try {
-            $response = $client->request('GET', '/manga-list/hot-manga?page='.$page);
+            $response = $client->request('GET', '/manga-list/hot-manga?page=' . $page);
             if ($response->getStatusCode() !== 200) {
                 return ["error" => "Failed to fetch data from the server."];
             }
@@ -58,13 +60,13 @@ class Scraper {
                 "totalPages" => $totalPages,
                 "results" => $manxas
             ];
-
         } catch (\Exception $e) {
             return ["error" => $e->getMessage()];
         }
     }
 
-    public static function getManxa($manxaUrl): array {
+    public static function getManxa($manxaUrl): array
+    {
         $client = new Client([
             'timeout'  => 10.0,
             'headers' => [
@@ -72,7 +74,7 @@ class Scraper {
                 'Referer' => 'https://www.mangakakalot.gg/'
             ]
         ]);
-        
+
         try {
             $response = $client->request('GET', $manxaUrl);
             if ($response->getStatusCode() !== 200) {
@@ -87,43 +89,51 @@ class Scraper {
             $manxaInfoElement = $manxaElement->filter('.manga-info-top > .manga-info-content > .manga-info-text');
             $title = $manxaInfoElement->filter('li')->eq(0)->text();
             $authors = $manxaInfoElement->filter('li')->eq(1)->filter('a')->text();
-            
-            $status = (function() use ($manxaInfoElement) {
+
+            $status = (function () use ($manxaInfoElement) {
                 $string = $manxaInfoElement->filter('li')->eq(2)->text();
                 $pieces = explode(" ", $string);
-                
+
                 return array_pop($pieces);
             })();
-            
-            $lastUpdate = (function() use ($manxaInfoElement) {
+
+            $lastUpdate = (function () use ($manxaInfoElement) {
                 $string = $manxaInfoElement->filter('li')->eq(3)->text();
                 $pieces = explode(" ", $string);
 
-                return implode(" " ,array_slice($pieces, 3));
+                return implode(" ", array_slice($pieces, 3));
             })();
 
-            $views = (function() use ($manxaInfoElement) {
+            $views = (function () use ($manxaInfoElement) {
                 $string = $manxaInfoElement->filter('li')->eq(5)->text();
                 $pieces = explode(" ", $string);
 
                 return array_pop($pieces);
             })();
-            
+
             $genres = [];
             $manxaInfoElement->filter('.genres')->filter('a')->each(function (Crawler $node) use (&$genres) {
                 array_push($genres, $node->text());
             });
-            
-            $rating = (function() use ($manxaInfoElement) {
+
+            $rating = (function () use ($manxaInfoElement) {
                 $string = $manxaInfoElement->filter('#rate_row_cmd')->text();
                 $pieces = explode(" ", $string);
 
                 return implode("", array_slice($pieces, 3, 3));
             })();
-            
+
             $img = $manxaElement->filter('.manga-info-top > .manga-info-pic > img')->attr('src');
 
-            $summary = $manxaElement->filter('#contentBox')->text();
+            $contentBox = $manxaElement->filter('#contentBox');
+            // delete h2 element
+            $contentBox->filter('h2')->each(function (Crawler $node) {
+                $domNode = $node->getNode(0);
+                if ($domNode && $domNode->parentNode) {
+                    $domNode->parentNode->removeChild($domNode);
+                }
+            });
+            $summary = $contentBox->text();
 
             $chapters = [];
             $manxaElement->filter(".chapter-list > .row")->each(function (Crawler $node) use (&$chapters) {
@@ -154,36 +164,37 @@ class Scraper {
             ];
 
             return $manxa;
-
         } catch (\Exception $e) {
             return ["error" => $e->getMessage()];
         }
     }
 
-    public static function getImage($url): string {
+    public static function getImage($url): string
+    {
         $opts = [
             'http' => [
                 'method' => 'GET',
-                'header' => 
-                    "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)\r\n" .
+                'header' =>
+                "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)\r\n" .
                     "Accept: image/avif,image/webp,image/apng,image/*,*/*;q=0.8\r\n" .
                     "Referer: https://www.mangakakalot.gg/\r\n"
             ]
         ];
-        
+
         $context = stream_context_create($opts);
         $imageData = @file_get_contents($url, false, $context);
-        
+
         if ($imageData === false) {
             http_response_code(500);
             echo "Failed to load image.";
             exit;
         }
-        
+
         return $imageData;
     }
 
-    public static function getChapter($url): array {
+    public static function getChapter($url): array
+    {
         $client = new Client([
             'timeout'  => 10.0,
             'headers' => [
@@ -191,7 +202,7 @@ class Scraper {
                 'Referer' => 'https://www.mangakakalot.gg/'
             ]
         ]);
-        
+
         try {
             $response = $client->request('GET', $url);
             if ($response->getStatusCode() !== 200) {
@@ -203,20 +214,20 @@ class Scraper {
 
             // Filter the HTML to get the image URLs of required manxa chapter
             $chapterImageElements = $crawler->filter('.container-chapter-reader > img');
-            
+
             $imageUrls = [];
             $chapterImageElements->each(function (Crawler $node) use (&$imageUrls) {
                 array_push($imageUrls, $node->attr('src'));
             });
 
             return $imageUrls;
-
         } catch (\Exception $e) {
             return ["error" => $e->getMessage()];
         }
     }
 
-    public static function getSearchResults($query, $page = 1): array {
+    public static function getSearchResults($query, $page = 1): array
+    {
         $client = new Client([
             'base_uri' => 'https://www.mangakakalot.gg',
             'timeout'  => 10.0,
@@ -225,7 +236,7 @@ class Scraper {
                 'Referer' => 'https://www.mangakakalot.gg/'
             ]
         ]);
-        
+
         try {
             $response = $client->request('GET', '/search/story/' . urlencode($query) . '?page=' . $page);
             if ($response->getStatusCode() !== 200) {
@@ -265,7 +276,6 @@ class Scraper {
                 "totalPages" => (int) $totalPages,
                 "results" => $results
             ];
-
         } catch (\Exception $e) {
             return ["error" => $e->getMessage()];
         }
