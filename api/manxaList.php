@@ -7,18 +7,23 @@ header('Content-Type: application/json');
 
 use App\Scraper;
 
-// get page from query parameter
+// get page from query parameter (default = 1)
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
-try {
-    $data = Scraper::getManxaList($page);
-    echo json_encode([
-        'success' => true,
-        'data' => $data
-    ]);
-} catch (Exception $e) {
+$data = Scraper::getManxaList($page);
+
+// Handle scraper error
+if (isset($data['error'])) {
+    http_response_code(502);
     echo json_encode([
         'success' => false,
-        'error' => $e->getMessage()
+        'error' => $data['error']
     ]);
+    exit;
 }
+
+// Success
+echo json_encode([
+    'success' => true,
+    'data' => $data
+]);

@@ -7,14 +7,31 @@ header('Content-Type: application/json');
 
 use App\Scraper;
 
-// get manxaUrl from query parameter
+// Get query and page from query parameters
 $query = isset($_GET['query']) ? $_GET['query'] : null;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
-if ($query === null) {
-    echo json_encode(["success" => false, "error" => "query parameter is required."]);
+if (!$query) {
+    http_response_code(400);
+    echo json_encode([
+        "success" => false,
+        "error" => "Missing 'query' parameter."
+    ]);
     exit;
 }
 
 $data = Scraper::getSearchResults($query, $page);
-echo json_encode(["success" => true, "data" => $data]);
+
+if (isset($data['error'])) {
+    http_response_code(502);
+    echo json_encode([
+        "success" => false,
+        "error" => $data['error']
+    ]);
+    exit;
+}
+
+echo json_encode([
+    "success" => true,
+    "data" => $data
+]);

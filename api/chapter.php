@@ -7,13 +7,31 @@ header('Content-Type: application/json');
 
 use App\Scraper;
 
-// get chapter from query parameter
-$chapter = isset($_GET['chapter']) ? $_GET['chapter'] : null;
+$chapterUrl = $_GET['chapter'] ?? null;
 
-if ($chapter === null) {
-    echo json_encode(["success" => false, "error" => "Chapter parameter is required."]);
+if (!$chapterUrl) {
+    http_response_code(400);
+    echo json_encode([
+        "success" => false,
+        "error" => "Missing 'chapter' parameter."
+    ]);
     exit;
 }
 
-$images = Scraper::getChapter($chapter);
-echo json_encode(["success" => true, "data" => $images]);
+$data = Scraper::getChapter($chapterUrl);
+
+// Check if an error was returned
+if (isset($data['error'])) {
+    http_response_code(502);
+    echo json_encode([
+        "success" => false,
+        "error" => $data['error']
+    ]);
+    exit;
+}
+
+// Success
+echo json_encode([
+    "success" => true,
+    "data" => $data
+]);

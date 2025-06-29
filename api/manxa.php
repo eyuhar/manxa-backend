@@ -10,10 +10,30 @@ use App\Scraper;
 // get manxaUrl from query parameter
 $manxaUrl = isset($_GET['manxa_url']) ? $_GET['manxa_url'] : null;
 
-if ($manxaUrl === null) {
-    echo json_encode(["success" => false, "error" => "manxa_url parameter is required."]);
+if (!$manxaUrl) {
+    http_response_code(400);
+    echo json_encode([
+        "success" => false,
+        "error" => "Missing 'manxa_url' parameter."
+    ]);
     exit;
 }
 
+//call scraper
 $data = Scraper::getManxa($manxaUrl);
-echo json_encode(["success" => true, "data" => $data]);
+
+// Handle scraper error
+if (isset($data['error'])) {
+    http_response_code(502);
+    echo json_encode([
+        "success" => false,
+        "error" => $data['error']
+    ]);
+    exit;
+}
+
+// Success
+echo json_encode([
+    "success" => true,
+    "data" => $data
+]);
