@@ -287,6 +287,37 @@ class Scraper
         }
     }
 
+    public static function cleanSearchQuery(string $input): string
+    {
+        // 1. Replace all desired characters with _ or remove them
+        $replacements = [
+            '/[\s]*-[\s]*/' => '_',   // " - ", " -", "- ", "-" → "_"
+            '/\s+/'         => '_',   // Spaces → "_"
+            '/,/'           => '',    // Remove comma
+            '/[!?]/'        => '',    // Remove ! and ?
+            '/:/'           => '_',   // : → _
+            '/\./'          => '',    // Remove dot
+            "/'/"           => '_',   // Apostrophe → _
+        ];
+
+        $cleaned = $input;
+
+        foreach ($replacements as $pattern => $replacement) {
+            $cleaned = preg_replace($pattern, $replacement, $cleaned);
+        }
+
+        // 2. Reduce multiple underscores to a single one
+        $cleaned = preg_replace('/_+/', '_', $cleaned);
+
+        // 3. Remove leading or trailing underscores
+        $cleaned = trim($cleaned, '_');
+
+        // 4. Convert to lowercase
+        $cleaned = strtolower($cleaned);
+
+        return $cleaned;
+    }
+
     public static function getSearchResults($query, $page = 1): array
     {
         $client = new Client([
@@ -299,7 +330,7 @@ class Scraper
         ]);
 
         try {
-            $response = $client->request('GET', '/search/story/' . urlencode($query) . '?page=' . $page);
+            $response = $client->request('GET', '/search/story/' . urlencode(self::cleanSearchQuery($query)) . '?page=' . $page);
 
             if ($response->getStatusCode() !== 200) {
                 error_log("Search failed for query '{$query}' (status: {$response->getStatusCode()})");
