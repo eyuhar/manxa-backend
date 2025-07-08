@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../src/db.php';
 require_once __DIR__ . '/../../src/jwtUtils.php';
-require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/../init.php';
 
 header('Content-Type: application/json');
 
@@ -46,7 +46,7 @@ try {
     $stmt->execute([$uid, $listId]);
     $favorites = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode(['success' => true, 'list' => ''.$listName, 'favorites' => $favorites]);
+    echo json_encode(['success' => true, 'list' => '' . $listName, 'favorites' => $favorites]);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);

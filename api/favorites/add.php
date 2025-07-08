@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../src/db.php';
 require_once __DIR__ . '/../../src/jwtUtils.php';
-require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/../init.php';
 
 header('Content-Type: application/json');
 
@@ -68,7 +68,7 @@ try {
     $stmt = $pdo->prepare("INSERT INTO favorites (user_id, list_id, title, manxa_url) VALUES (?, ?, ?, ?)");
     $stmt->execute([$uid, $listId, $title, $manxaUrl]);
 
-    echo json_encode(['success' => true, 'message' => 'Manxa added to '.$listName.'.']);
+    echo json_encode(['success' => true, 'message' => 'Manxa added to ' . $listName . '.']);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
