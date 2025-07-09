@@ -1,6 +1,5 @@
 <?php
 
-require_once __DIR__ . '/init.php';
 // Load the database connection function
 require_once __DIR__ . '/../src/db.php';
 
@@ -51,7 +50,6 @@ try {
 
     // Respond with success
     echo json_encode(['success' => true, 'message' => 'User registered successfully.']);
-
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);

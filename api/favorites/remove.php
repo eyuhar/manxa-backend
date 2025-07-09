@@ -1,17 +1,23 @@
 <?php
 require_once __DIR__ . '/../../src/db.php';
 require_once __DIR__ . '/../../src/jwtUtils.php';
-require_once __DIR__ . '/../init.php';
 
 header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents("php://input"), true);
-$manxaUrl = trim($data['manxa_url'] ?? '');
-$listName = trim($data['list_name'] ?? 'Standard');
 
-if (empty($manxaUrl)) {
+
+$items = [];
+if (isset($data[0])) {
+    $items = $data;
+} elseif (isset($data['manxa_url'])) {
+    $items[] = [
+        'manxa_url' => $data['manxa_url'],
+        'list_name' => $data['list_name'] ?? 'Standard'
+    ];
+} else {
     http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'manxa_url is required']);
+    echo json_encode(['success' => false, 'error' => 'Invalid input format']);
     exit;
 }
 
@@ -34,30 +40,80 @@ if (!$uid) {
 
 try {
     $pdo = getDatabaseConnection();
+    $results = [];
+    $allSuccess = true;
+    $allFailed = true;
 
-    // Retrieve list_id based on name and user_id
-    $stmt = $pdo->prepare("SELECT id FROM lists WHERE user_id = ? AND name = ?");
-    $stmt->execute([$uid, $listName]);
-    $list = $stmt->fetch();
+    foreach ($items as $item) {
+        $manxaUrl = trim($item['manxa_url'] ?? '');
+        $listName = trim($item['list_name'] ?? 'Standard');
 
-    if (!$list) {
-        http_response_code(404);
-        echo json_encode(['success' => false, 'error' => 'List not found']);
-        exit;
+        if (empty($manxaUrl)) {
+            $results[] = [
+                'manxa_url' => $manxaUrl,
+                'list_name' => $listName,
+                'success' => false,
+                'status' => 400,
+                'error' => 'manxa_url is required'
+            ];
+            $allSuccess = false;
+            continue;
+        }
+
+        // Retrieve list_id based on name and user_id
+        $stmt = $pdo->prepare("SELECT id FROM lists WHERE user_id = ? AND name = ?");
+        $stmt->execute([$uid, $listName]);
+        $list = $stmt->fetch();
+
+        if (!$list) {
+            $results[] = [
+                'manxa_url' => $manxaUrl,
+                'list_name' => $listName,
+                'success' => false,
+                'status' => 404,
+                'error' => 'List not found'
+            ];
+            $allSuccess = false;
+            continue;
+        }
+
+        $listId = $list['id'];
+
+        // Remove manxa from favorites
+        $stmt = $pdo->prepare("DELETE FROM favorites WHERE user_id = ? AND list_id = ? AND manxa_url = ?");
+        $stmt->execute([$uid, $listId, $manxaUrl]);
+
+        if ($stmt->rowCount() === 0) {
+            $results[] = [
+                'manxa_url' => $manxaUrl,
+                'list_name' => $listName,
+                'success' => false,
+                'status' => 404,
+                'error' => 'Manxa not found in ' . $listName . '.'
+            ];
+            $allSuccess = false;
+        } else {
+            $results[] = [
+                'manxa_url' => $manxaUrl,
+                'list_name' => $listName,
+                'success' => true,
+                'status' => 200,
+                'message' => 'Manxa removed from ' . $listName . '.'
+            ];
+            $allFailed = false;
+        }
     }
 
-    $listId = $list['id'];
-
-    // Remove manxa from favorites
-    $stmt = $pdo->prepare("DELETE FROM favorites WHERE user_id = ? AND list_id = ? AND manxa_url = ?");
-    $stmt->execute([$uid, $listId, $manxaUrl]);
-
-    if ($stmt->rowCount() === 0) {
-        http_response_code(404);
-        echo json_encode(['success' => false, 'error' => 'Manxa not found in ' . $listName . '.']);
+    // Set HTTP status code for the whole response
+    if ($allSuccess) {
+        http_response_code(200); // All deleted
+    } elseif ($allFailed) {
+        http_response_code(400); // All failed (bad request)
     } else {
-        echo json_encode(['success' => true, 'message' => 'Manxa removed from ' . $listName . '.']);
+        http_response_code(207); // Multi-Status (partial success)
     }
+
+    echo json_encode(['results' => $results]);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);

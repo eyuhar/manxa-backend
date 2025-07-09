@@ -1,19 +1,23 @@
 <?php
 require_once __DIR__ . '/../../src/db.php';
 require_once __DIR__ . '/../../src/jwtUtils.php';
-require_once __DIR__ . '/../init.php';
 
 header('Content-Type: application/json');
 
 // Get and decode the incoming JSON data
 $data = json_decode(file_get_contents("php://input"), true);
-$manxaUrl = trim($data['manxa_url'] ?? '');
-$chapterUrl = trim($data['chapter_url'] ?? '');
 
-// Validate input
-if (empty($manxaUrl) || empty($chapterUrl)) {
+$items = [];
+if (isset($data[0])) {
+    $items = $data;
+} elseif (isset($data['manxa_url']) && isset($data['chapter_url'])) {
+    $items[] = [
+        'manxa_url' => $data['manxa_url'],
+        'chapter_url' => $data['chapter_url']
+    ];
+} else {
     http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'manxa_url and chapter_url are required']);
+    echo json_encode(['success' => false, 'error' => 'Invalid input format']);
     exit;
 }
 
@@ -36,21 +40,66 @@ if (!$uid) {
 
 try {
     $pdo = getDatabaseConnection();
+    $results = [];
+    $allSuccess = true;
+    $allFailed = true;
 
-    // Check if this chapter was already marked as read
-    $stmt = $pdo->prepare("SELECT id FROM chapter_progress WHERE user_id = ? AND manxa_url = ? AND chapter_url = ?");
-    $stmt->execute([$uid, $manxaUrl, $chapterUrl]);
+    foreach ($items as $item) {
+        $manxaUrl = trim($item['manxa_url'] ?? '');
+        $chapterUrl = trim($item['chapter_url'] ?? '');
 
-    if ($stmt->fetch()) {
-        echo json_encode(['success' => true, 'message' => 'Already marked as read']);
-        exit;
+        if (empty($manxaUrl) || empty($chapterUrl)) {
+            $results[] = [
+                'manxa_url' => $manxaUrl,
+                'chapter_url' => $chapterUrl,
+                'success' => false,
+                'status' => 400,
+                'error' => 'manxa_url and chapter_url are required'
+            ];
+            $allSuccess = false;
+            continue;
+        }
+
+        // Check if this chapter was already marked as read
+        $stmt = $pdo->prepare("SELECT id FROM chapter_progress WHERE user_id = ? AND manxa_url = ? AND chapter_url = ?");
+        $stmt->execute([$uid, $manxaUrl, $chapterUrl]);
+
+        if ($stmt->fetch()) {
+            $results[] = [
+                'manxa_url' => $manxaUrl,
+                'chapter_url' => $chapterUrl,
+                'success' => true,
+                'status' => 200,
+                'message' => 'Already marked as read'
+            ];
+            $allFailed = false;
+            continue;
+        }
+
+        // Insert new record
+        $stmt = $pdo->prepare("INSERT INTO chapter_progress (user_id, manxa_url, chapter_url) VALUES (?, ?, ?)");
+        $stmt->execute([$uid, $manxaUrl, $chapterUrl]);
+
+        $results[] = [
+            'manxa_url' => $manxaUrl,
+            'chapter_url' => $chapterUrl,
+            'success' => true,
+            'status' => 201,
+            'message' => 'Chapter marked as read.'
+        ];
+        $allFailed = false;
     }
 
-    // Insert new record
-    $stmt = $pdo->prepare("INSERT INTO chapter_progress (user_id, manxa_url, chapter_url) VALUES (?, ?, ?)");
-    $stmt->execute([$uid, $manxaUrl, $chapterUrl]);
+    // Set HTTP status code for the whole response
+    if ($allSuccess) {
+        http_response_code(201); // All created
+    } elseif ($allFailed) {
+        http_response_code(400); // All failed (bad request)
+    } else {
+        http_response_code(207); // Multi-Status
+    }
 
-    echo json_encode(['success' => true, 'message' => 'Chapter marked as read.']);
+    echo json_encode(['results' => $results]);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
