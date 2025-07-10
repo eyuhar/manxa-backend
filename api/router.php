@@ -89,7 +89,7 @@ switch ($path) {
         }
         break;
 
-    case '/chapters':
+    case '/chapter':
         if ($method === 'GET') {
             routeTo("$basePath/chapter.php");
         } else {
