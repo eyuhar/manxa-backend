@@ -1,7 +1,6 @@
-
 ## 🧑‍💻 User Authentication
 
-### `POST /api/register.php`
+### `POST /api/register`
 
 Registers a new user and creates a default list ("Standard").
 
@@ -9,9 +8,9 @@ Registers a new user and creates a default list ("Standard").
 
 ```json
 {
-    "user_name": "User",
-    "email": "user@example.com",
-    "password": "yourPassword"
+  "user_name": "User",
+  "email": "user@example.com",
+  "password": "yourPassword"
 }
 ```
 
@@ -19,12 +18,12 @@ Registers a new user and creates a default list ("Standard").
 
 ```json
 {
-    "success": true,
-    "message": "User registered successfully."
+  "success": true,
+  "message": "User registered successfully."
 }
 ```
 
-### `POST /api/login.php`
+### `POST /api/login`
 
 Authenticates user and returns a JWT.
 
@@ -32,8 +31,8 @@ Authenticates user and returns a JWT.
 
 ```json
 {
-    "email": "user@example.com",
-    "password": "yourPassword"
+  "email": "user@example.com",
+  "password": "yourPassword"
 }
 ```
 
@@ -41,15 +40,15 @@ Authenticates user and returns a JWT.
 
 ```json
 {
-    "success": true,
-    "message": "Login successful.",
-    "token": "JWT_TOKEN_HERE"
+  "success": true,
+  "message": "Login successful.",
+  "token": "JWT_TOKEN_HERE"
 }
 ```
 
 ## 👤 Profile
 
-### `GET /api/getProfile.php`
+### `GET /api/profile`
 
 Requires JWT.
 
@@ -63,18 +62,18 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
-    "success": true,
-    "data": {
-        "id": 1,
-        "email": "user@example.com",
-        "created_at": "creation_timestamp"
-    }
+  "success": true,
+  "data": {
+    "id": 1,
+    "email": "user@example.com",
+    "created_at": "creation_timestamp"
+  }
 }
 ```
 
 ## 📚 Custom Lists
 
-### `POST /api/lists/add.php`
+### `POST /api/lists`
 
 Creates a new list for the user.
 
@@ -82,7 +81,7 @@ Creates a new list for the user.
 
 ```json
 {
-    "name": "My Manxa List"
+  "name": "My Manxa List"
 }
 ```
 
@@ -90,12 +89,12 @@ Creates a new list for the user.
 
 ```json
 {
-    "success": true,
-    "message": "List created."
+  "success": true,
+  "message": "List created."
 }
 ```
 
-### `GET /api/lists/get.php`
+### `GET /api/lists`
 
 Returns all user-defined lists.
 
@@ -103,21 +102,21 @@ Returns all user-defined lists.
 
 ```json
 {
-    "success": true,
-    "lists": [
-        {
-            "name": "Standard",
-            "created_at": "creation_timestamp"
-        },
-        {
-            "name": "Read Later",
-            "created_at": "creation_timestamp"
-        }
-    ]
+  "success": true,
+  "lists": [
+    {
+      "name": "Standard",
+      "created_at": "creation_timestamp"
+    },
+    {
+      "name": "Read Later",
+      "created_at": "creation_timestamp"
+    }
+  ]
 }
 ```
 
-### `POST /api/lists/rename.php`
+### `PUT /api/lists`
 
 Renames a list.
 
@@ -125,8 +124,8 @@ Renames a list.
 
 ```json
 {
-    "old_name": "Standard",
-    "new_name": "Classic"
+  "old_name": "Standard",
+  "new_name": "Classic"
 }
 ```
 
@@ -134,12 +133,12 @@ Renames a list.
 
 ```json
 {
-    "success": true,
-    "message": "List renamed."
+  "success": true,
+  "message": "List renamed."
 }
 ```
 
-### `POST /api/lists/remove.php`
+### `DELETE /api/lists`
 
 Deletes a list.
 
@@ -147,7 +146,7 @@ Deletes a list.
 
 ```json
 {
-    "name": "Read Later"
+  "name": "Read Later"
 }
 ```
 
@@ -155,24 +154,25 @@ Deletes a list.
 
 ```json
 {
-    "success": true,
-    "message": "List deleted."
+  "success": true,
+  "message": "List deleted."
 }
 ```
 
 ## ⭐ Favorites
 
-### `POST /api/favorites/add.php`
+### `POST /api/favorites`
 
-Adds a manxa to a favorites list. If `list_name` is not provided, defaults to `"Standard"`.
+Adds a manxa to a favorites list. Accepts either a single object or an array of objects.
+If `list_name` is not provided, defaults to `"Standard"`.
 
 **Request JSON:**
 
 ```json
 {
-    "title": "One Piece",
-    "manxa_url": "/manxa/one-piece",
-    "list_name": "Read Later" // optional
+  "title": "One Piece",
+  "manxa_url": "/manxa/one-piece",
+  "list_name": "Read Later" // optional
 }
 ```
 
@@ -180,12 +180,19 @@ Adds a manxa to a favorites list. If `list_name` is not provided, defaults to `"
 
 ```json
 {
-    "success": true,
-    "message": "Manxa added to list_name."
+  "results": [
+    {
+      "title": "One Piece",
+      "manxa_url": "/manxa/one-piece",
+      "success": true,
+      "status": 201,
+      "message": "Manxa added to Read Later."
+    }
+  ]
 }
 ```
 
-### `GET /api/favorites/get.php?list=list_name`
+### `GET /api/favorites?list=list_name`
 
 Returns all favorites from list list_name.
 
@@ -193,33 +200,34 @@ Returns all favorites from list list_name.
 
 ```json
 {
-    "success": true,
-    "list": "Standard",
-    "favorites": [
-        {
-            "title": "Naruto",
-            "manxa_url": "/manxa/naruto",
-            "created_at": "creation_timestamp"
-        },
-        {
-            "title": "One Piece",
-            "manxa_url": "/manxa/one-piece",
-            "created_at": "creation_timestamp"
-        }
-    ]
+  "success": true,
+  "list": "Standard",
+  "favorites": [
+    {
+      "title": "Naruto",
+      "manxa_url": "/manxa/naruto",
+      "created_at": "creation_timestamp"
+    },
+    {
+      "title": "One Piece",
+      "manxa_url": "/manxa/one-piece",
+      "created_at": "creation_timestamp"
+    }
+  ]
 }
 ```
 
-### `POST /api/favorites/remove.php`
+### `DELETE /api/favorites`
 
-Removes a manxa from a list. If `list_name` is not provided, defaults to `"Standard"`.
+Removes a manxa from a list. Accepts either a single object or an array of objects.
+If `list_name` is not provided, defaults to `"Standard"`.
 
 **Request JSON:**
 
 ```json
 {
-    "manxa_url": "/manxa/naruto",
-    "list_name": "Standard" // optional
+  "manxa_url": "/manxa/naruto",
+  "list_name": "Standard" // optional
 }
 ```
 
@@ -227,23 +235,30 @@ Removes a manxa from a list. If `list_name` is not provided, defaults to `"Stand
 
 ```json
 {
-    "success": true,
-    "message": "Manxa removed from list_name."
+  "results": [
+    {
+      "manxa_url": "/manxa/naruto",
+      "list_name": "Standard",
+      "success": true,
+      "status": 200,
+      "message": "Manxa removed from Standard."
+    }
+  ]
 }
 ```
 
 ## ✅ Reading Progress
 
-### `POST /api/chapter-progress/markRead.php`
+### `POST /api/chapter-progress`
 
-Marks a chapter as read.
+Marks a chapter as read. Accepts either a single object or an array of objects.
 
 **Request JSON:**
 
 ```json
 {
-    "manxa_url": "/manxa/bleach",
-    "chapter_url": "/manxa/bleach/chapter-123"
+  "manxa_url": "/manxa/bleach",
+  "chapter_url": "/manxa/bleach/chapter-123"
 }
 ```
 
@@ -251,21 +266,28 @@ Marks a chapter as read.
 
 ```json
 {
-    "success": true,
-    "message": "Chapter marked as read."
+  "results": [
+    {
+      "manxa_url": "/manxa/bleach",
+      "chapter_url": "/manxa/bleach/chapter-123",
+      "success": true,
+      "status": 201,
+      "message": "Chapter marked as read"
+    }
+  ]
 }
 ```
 
-### `POST /api/chapter-progress/unmarkRead.php`
+### `DELETE /api/chapter-progress`
 
-Unmarks a chapter.
+Unmarks a chapter. Accepts either a single object or an array of objects.
 
 **Request JSON:**
 
 ```json
 {
-    "manxa_url": "/manxa/bleach",
-    "chapter_url": "/manxa/bleach/chapter-123"
+  "manxa_url": "/manxa/bleach",
+  "chapter_url": "/manxa/bleach/chapter-123"
 }
 ```
 
@@ -273,12 +295,19 @@ Unmarks a chapter.
 
 ```json
 {
-    "success": true,
-    "message": "Chapter unmarked as read."
+  "results": [
+    {
+      "manxa_url": "/manxa/bleach",
+      "chapter_url": "/manxa/bleach/chapter-123",
+      "success": true,
+      "status": 200,
+      "message": "Chapter unmarked as read."
+    }
+  ]
 }
 ```
 
-### `GET /api/chapter-progress/getReadChapters.php?manxa_url=/manxa/bleach`
+### `GET /api/chapter-progress?manxa_url=/manxa/bleach`
 
 Returns list of chapter URLs marked as read.
 
@@ -286,33 +315,25 @@ Returns list of chapter URLs marked as read.
 
 ```json
 {
-    "success": true,
-    "read_chapters": [
-        "/manxa/bleach/chapter-123",
-        "/manxa/bleach/chapter-124"
-    ]
+  "success": true,
+  "read_chapters": ["/manxa/bleach/chapter-123", "/manxa/bleach/chapter-124"]
 }
 ```
 
 ## 🔍 Scraper Endpoints
 
-### `GET /api/manxa.php?title=manxa_title`
+### `GET /api/manxa?title=manxa_title`
 
 Scrapes homepage manxa listings.
 
-### `GET /api/manxaList.php?page=1`
+### `GET /api/manxas?query=query&page=1`
 
-Scrapes manxa listing.
+Scrapes manxa list. query and page parameters are optional.
 
-### `GET /api/chapter.php?chapter=/manxa/naruto/chapter-123`
+### `GET /api/chapter?chapter=/manxa/naruto/chapter-123`
 
-Returns a chapter imgs.
+Returns chapter imgs.
 
-### `GET /api/imageProxy.php?url=https://...`
+### `GET /api/image-proxy?url=https://...`
 
 Image proxy (used if CORS issues with images arise).
-
-## `GET /api/search.php?query=isekai`
-
-Searches for manxa matching the given query string.
-

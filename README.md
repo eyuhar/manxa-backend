@@ -1,14 +1,12 @@
 # manxa-scraper-backend
 
 This project is a backend API for a man(x)a (g, hw, hu) reading application. It includes user authentication, favorites management, custom list support, reading progress tracking, and scraping functionality for manxa content.
-
-
+The API follows a RESTful design and uses JSON Web Tokens (JWT) for authentication.
 
 ## 📄 Documentation
 
 For the full API documentation and implementation details, see [docs/api.md](docs/api.md).
-
-
+Note: All HTTP methods (GET, POST, PUT, DELETE) are routed through `api/router.php` and mapped to the corresponding files based on the path and method (e.g. `POST /api/favorites` → `api/favorites/add.php`).
 
 ## 📁 Project Structure
 
@@ -34,17 +32,17 @@ api/
 ├── manxa.php                  # Scrape manxa info
 ├── manxaList.php              # Scrape manxa list
 ├── register.php               # Register a new user
+├── search.php                 # Scrape manxa list based on query string
+├── router.php                 # Central router for mapping RESTful API requests to files
 src/
 ├── db.php                     # Database connection
 ├── jwtUtils.php               # JWT generation and validation
 └── Scraper.php                # Manxa scraping logic
 ```
 
-
-
 ## Example
 
-### `GET /api/favorites/get.php?list=list_name`
+### `GET /api/favorites?list=list_name`
 
 Returns all favorites from list list_name.
 
@@ -58,24 +56,22 @@ Authorization: Bearer <JWT_TOKEN>
 
 ```json
 {
-    "success": true,
-    "list": "Standard",
-    "favorites": [
-        {
-            "title": "Naruto",
-            "manxa_url": "/manxa/naruto",
-            "created_at": "creation_timestamp"
-        },
-        {
-            "title": "One Piece",
-            "manxa_url": "/manxa/one-piece",
-            "created_at": "creation_timestamp"
-        }
-    ]
+  "success": true,
+  "list": "Standard",
+  "favorites": [
+    {
+      "title": "Naruto",
+      "manxa_url": "/manxa/naruto",
+      "created_at": "creation_timestamp"
+    },
+    {
+      "title": "One Piece",
+      "manxa_url": "/manxa/one-piece",
+      "created_at": "creation_timestamp"
+    }
+  ]
 }
 ```
-
-
 
 ## 🔐 JWT Auth
 
@@ -85,18 +81,15 @@ Most endpoints require a valid JWT in the `Authorization` header:
 Authorization: Bearer YOUR_TOKEN
 ```
 
+Unauthorized requests will return a 401 status code.
 You can use helper methods in `src/jwtUtils.php` to generate and verify tokens.
-
-
 
 ## 🛠 Database Notes
 
-* All tables use `ON DELETE CASCADE` for relational integrity.
-* UUIDs or auto-increment integers used as primary keys.
-* `manxa_url` and `chapter_url` are used as unique references for manxa and chapters.
-* Default list `"Favorites"` is created during registration.
-
-
+- All tables use `ON DELETE CASCADE` for relational integrity.
+- UUIDs or auto-increment integers used as primary keys.
+- `manxa_url` and `chapter_url` are used as unique references for manxa and chapters.
+- Default list `"Favorites"` is created during registration.
 
 ## 📦 Setup
 
@@ -117,13 +110,8 @@ JWT_SECRET=your_super_secret_key
 php -S localhost:8000
 ```
 
-
-
-
 ## ⚠️ Disclaimer
 
 This project includes scraping features to extract publicly available manxa data. It is intended solely for personal or educational use. Please ensure you comply with the terms of service of any websites you interact with. The author does not condone or support misuse of this code.
 
-
 ---
-
