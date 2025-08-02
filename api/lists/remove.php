@@ -16,6 +16,12 @@ if (empty($listName)) {
     exit;
 }
 
+if ($listName === 'Standard') {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Cannot delete the Standard list']);
+    exit;
+}
+
 // Get Authorization header
 $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? null;
 if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
