@@ -31,4 +31,8 @@ $mimeType = $finfo->buffer($imageData) ?: 'application/octet-stream';
 header("Content-Type: $mimeType");
 header("Content-Length: " . strlen($imageData));
 
+// Set cache headers – 1 hour
+header("Cache-Control: public, max-age=3600");
+header("Expires: " . gmdate('D, d M Y H:i:s', time() + 3600) . " GMT");
+
 echo $imageData;
