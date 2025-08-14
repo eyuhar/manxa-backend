@@ -89,6 +89,14 @@ switch ($path) {
         }
         break;
 
+    case '/history':
+        if ($method === 'GET') {
+            routeTo("$basePath/history.php");
+        } else {
+            sendMethodNotAllowed();
+        }
+        break;
+
     case '/chapter':
         if ($method === 'GET') {
             routeTo("$basePath/chapter.php");
