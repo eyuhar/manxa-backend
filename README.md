@@ -27,6 +27,7 @@ api/
 │   └── remove.php             # Delete a list
 ├── chapter.php                # Scrape chapter list from a manxa page
 ├── getProfile.php             # Get the logged-in user's profile info
+├── history.php                # Get reading history
 ├── imageProxy.php             # Proxy image URLs
 ├── login.php                  # User login and JWT token generation
 ├── manxa.php                  # Scrape manxa info
@@ -60,13 +61,13 @@ Authorization: Bearer <JWT_TOKEN>
   "list": "Standard",
   "favorites": [
     {
-      "title": "Naruto",
-      "manxa_url": "/manxa/naruto",
+      "title": "Kingdom",
+      "manxa_url": "/manxa/Kingdom",
       "created_at": "creation_timestamp"
     },
     {
-      "title": "One Piece",
-      "manxa_url": "/manxa/one-piece",
+      "title": "God of Martial Arts",
+      "manxa_url": "/manxa/god-of-martial-arts",
       "created_at": "creation_timestamp"
     }
   ]

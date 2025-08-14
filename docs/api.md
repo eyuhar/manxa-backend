@@ -170,8 +170,8 @@ If `list_name` is not provided, defaults to `"Standard"`.
 
 ```json
 {
-  "title": "One Piece",
-  "manxa_url": "/manxa/one-piece",
+  "title": "TwoPunch-Man",
+  "manxa_url": "/manxa/twopunch-man",
   "list_name": "Read Later" // optional
 }
 ```
@@ -182,8 +182,8 @@ If `list_name` is not provided, defaults to `"Standard"`.
 {
   "results": [
     {
-      "title": "One Piece",
-      "manxa_url": "/manxa/one-piece",
+      "title": "TwoPunch-Man",
+      "manxa_url": "/manxa/twopunch-man",
       "success": true,
       "status": 201,
       "message": "Manxa added to Read Later."
@@ -204,13 +204,13 @@ Returns all favorites from list list_name.
   "list": "Standard",
   "favorites": [
     {
-      "title": "Naruto",
-      "manxa_url": "/manxa/naruto",
+      "title": "TwoPunch-Man",
+      "manxa_url": "/manxa/TwoPunch-Man",
       "created_at": "creation_timestamp"
     },
     {
-      "title": "One Piece",
-      "manxa_url": "/manxa/one-piece",
+      "title": "The Devil Butler",
+      "manxa_url": "/manxa/the-devil-butler",
       "created_at": "creation_timestamp"
     }
   ]
@@ -226,7 +226,7 @@ If `list_name` is not provided, defaults to `"Standard"`.
 
 ```json
 {
-  "manxa_url": "/manxa/naruto",
+  "manxa_url": "/manxa/twopunch-man",
   "list_name": "Standard" // optional
 }
 ```
@@ -237,7 +237,7 @@ If `list_name` is not provided, defaults to `"Standard"`.
 {
   "results": [
     {
-      "manxa_url": "/manxa/naruto",
+      "manxa_url": "/manxa/twopunch-man",
       "list_name": "Standard",
       "success": true,
       "status": 200,
@@ -257,8 +257,8 @@ Marks a chapter as read. Accepts either a single object or an array of objects.
 
 ```json
 {
-  "manxa_url": "/manxa/bleach",
-  "chapter_url": "/manxa/bleach/chapter-123"
+  "manxa_url": "/manxa/kingdom",
+  "chapter_url": "/manxa/kingdom/chapter-123"
 }
 ```
 
@@ -268,8 +268,8 @@ Marks a chapter as read. Accepts either a single object or an array of objects.
 {
   "results": [
     {
-      "manxa_url": "/manxa/bleach",
-      "chapter_url": "/manxa/bleach/chapter-123",
+      "manxa_url": "/manxa/kingdom",
+      "chapter_url": "/manxa/kingdom/chapter-123",
       "success": true,
       "status": 201,
       "message": "Chapter marked as read"
@@ -286,8 +286,8 @@ Unmarks a chapter. Accepts either a single object or an array of objects.
 
 ```json
 {
-  "manxa_url": "/manxa/bleach",
-  "chapter_url": "/manxa/bleach/chapter-123"
+  "manxa_url": "/manxa/kingdom",
+  "chapter_url": "/manxa/kingdom/chapter-123"
 }
 ```
 
@@ -297,8 +297,8 @@ Unmarks a chapter. Accepts either a single object or an array of objects.
 {
   "results": [
     {
-      "manxa_url": "/manxa/bleach",
-      "chapter_url": "/manxa/bleach/chapter-123",
+      "manxa_url": "/manxa/kingdom",
+      "chapter_url": "/manxa/kingdom/chapter-123",
       "success": true,
       "status": 200,
       "message": "Chapter unmarked as read."
@@ -307,7 +307,7 @@ Unmarks a chapter. Accepts either a single object or an array of objects.
 }
 ```
 
-### `GET /api/chapter-progress?manxa_url=/manxa/bleach`
+### `GET /api/chapter-progress?manxa_url=/manxa/kingdom`
 
 Returns list of chapter URLs marked as read.
 
@@ -316,7 +316,28 @@ Returns list of chapter URLs marked as read.
 ```json
 {
   "success": true,
-  "read_chapters": ["/manxa/bleach/chapter-123", "/manxa/bleach/chapter-124"]
+  "read_chapters": ["/manxa/kingdom/chapter-123", "/manxa/kingdom/chapter-124"]
+}
+```
+
+## ✅ Reading History
+
+### `GET /api/history`
+
+Returns reading history.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "history": [
+    {
+      "manxa_url": "manxa/kingdom",
+      "chapter_url": "manxa/kingdom/chapter-123",
+      "read_at": "Y-m-d H:i:s"
+    }
+  ]
 }
 ```
 

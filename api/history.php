@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../src/db.php';
-require_once __DIR__ . '/../../src/jwtUtils.php';
+require_once __DIR__ . '/../src/db.php';
+require_once __DIR__ . '/../src/jwtUtils.php';
 
 
 header('Content-Type: application/json');
@@ -27,7 +27,7 @@ try {
 
     $stmt = $pdo->prepare("SELECT manxa_url, chapter_url, read_at FROM chapter_progress WHERE user_id = ?");
     $stmt->execute([$uid]);
-    $history = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $history = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode(['success' => true, 'history' => $history]);
 } catch (PDOException $e) {
