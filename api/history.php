@@ -25,7 +25,7 @@ if (!$uid) {
 try {
     $pdo = getDatabaseConnection();
 
-    $stmt = $pdo->prepare("SELECT manxa_url, chapter_url, read_at FROM chapter_progress WHERE user_id = ?");
+    $stmt = $pdo->prepare("SELECT manxa_url, chapter_url, read_at FROM chapter_progress WHERE user_id = ? ORDER BY read_at DESC");
     $stmt->execute([$uid]);
     $history = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
