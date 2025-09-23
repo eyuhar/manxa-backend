@@ -29,14 +29,14 @@ class Scraper
 
             $manxas = [];
 
-            $wrapper = $crawler->filter('.container > .main-wrapper > .listCol > .truyen-list');
+            $wrapper = $crawler->filter('.container > .main-wrapper > .listCol > .comic-list');
 
             if ($wrapper->count() === 0) {
                 return ["error" => "Could not find main list wrapper on the page."];
             }
 
             // Filter the HTML to get the list of manxa
-            $wrapper->filter('.list-truyen-item-wrap')->each(function (Crawler $node) use (&$manxas) {
+            $wrapper->filter('.list-comic-item-wrap')->each(function (Crawler $node) use (&$manxas) {
                 try {
                     $title = $node->filter('h3 > a')->count() > 0
                         ? $node->filter('h3 > a')->attr("title")
