@@ -1,7 +1,7 @@
 <?php
 
 // Allowed remote API domains
-$allowed_domains = ['api.mangadex.org'];
+$allowed_domains = ['api.mangadex.org', 'uploads.mangadex.org', 'mangadex.org'];
 
 // Read API URL from query string
 if (!isset($_GET['url'])) {
