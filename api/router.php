@@ -113,6 +113,10 @@ switch ($path) {
         }
         break;
 
+    case '/proxy-dex':
+        routeTo("$basePath/proxyDex.php");
+        break;
+
     default:
         http_response_code(404);
         echo json_encode(['error' => 'Route not found']);
