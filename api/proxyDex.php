@@ -14,7 +14,18 @@ $url = $_GET['url'];
 
 // Parse and validate domain
 $parsed = parse_url($url);
-if (!in_array($parsed['host'], $allowed_domains)) {
+
+$hostname = $parsed['host'];
+
+// Check if the hostname is explicitly allowed
+$isAllowed = in_array($hostname, $allowed_domains);
+
+// Also allow any subdomain of mangadex.network
+if (!$isAllowed && str_ends_with($hostname, '.mangadex.network')) {
+    $isAllowed = true;
+}
+
+if (!$isAllowed) {
     http_response_code(403);
     echo json_encode(['error' => 'Domain not allowed']);
     exit;
