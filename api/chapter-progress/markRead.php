@@ -13,7 +13,8 @@ if (isset($data[0])) {
 } elseif (isset($data['manxa_url']) && isset($data['chapter_url'])) {
     $items[] = [
         'manxa_url' => $data['manxa_url'],
-        'chapter_url' => $data['chapter_url']
+        'chapter_url' => $data['chapter_url'],
+        'chapter' => $data['chapter'],
     ];
 } else {
     http_response_code(400);
@@ -47,6 +48,7 @@ try {
     foreach ($items as $item) {
         $manxaUrl = trim($item['manxa_url'] ?? '');
         $chapterUrl = trim($item['chapter_url'] ?? '');
+        $chapter = trim($item['chapter'] ?? '');
 
         if (empty($manxaUrl) || empty($chapterUrl)) {
             $results[] = [
@@ -77,8 +79,8 @@ try {
         }
 
         // Insert new record
-        $stmt = $pdo->prepare("INSERT INTO chapter_progress (user_id, manxa_url, chapter_url) VALUES (?, ?, ?)");
-        $stmt->execute([$uid, $manxaUrl, $chapterUrl]);
+        $stmt = $pdo->prepare("INSERT INTO chapter_progress (user_id, manxa_url, chapter_url, chapter) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$uid, $manxaUrl, $chapterUrl, $chapter]);
 
         $results[] = [
             'manxa_url' => $manxaUrl,
